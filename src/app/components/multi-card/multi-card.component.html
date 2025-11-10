@@ -1,0 +1,74 @@
+<mat-card
+    appearance="outlined"
+    class="container mt-5"
+    [class.h-100]="!formsArray.length"
+>
+    @if (!formsArray.length) {
+        <div class="d-flex flex-column align-items-center justify-content-center h-100">
+            <h5>No form cards</h5>
+
+            <ng-container *ngTemplateOutlet="createForm"/>
+        </div>
+    } @else {
+        <div class="container">
+            <div class="row">
+                <mat-card-header class="d-flex justify-content-start align-items-center mb-3">
+                    @if (isSubmitting()) {
+                        <button
+                            matButton="filled"
+                            style="background-color: #aa1414"
+                            (click)="cancelSubmit()"
+                        >
+                            Cancel
+                        </button>
+
+                        <span class="ms-3" style="color: gray">{{ formattedTimer() }}</span>
+                    } @else {
+                        <button
+                            matButton="filled"
+                            (click)="submitAll()"
+                        >
+                            Submit all forms
+                        </button>
+
+                        @if (invalidCount) {
+                            <span class="ms-3" style="color: red">Invalid forms: {{ invalidCount }}</span>
+                        }
+                    }
+                </mat-card-header>
+            </div>
+
+            <div class="row">
+                @for (form of formsArray.controls; let index = $index; track form) {
+                    <app-card
+                        class="col-sm-6 col-md-4 col-lg-3 mb-4"
+                        [form]="form"
+                        [index]="index"
+                        (remove)="removeForm($event)"
+                    />
+                }
+
+                @if (formsArray.length < MAX_FORMS_COUNT && !isSubmitting()) {
+                    <ng-container *ngTemplateOutlet="createForm"/>
+                }
+            </div>
+        </div>
+    }
+</mat-card>
+
+<ng-template #createForm>
+    <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+        <mat-card
+            class="d-flex justify-content-center align-items-center h-100 py-3"
+            (click)="addForm()"
+        >
+            <mat-icon
+                matTooltip="Add form card"
+                [matTooltipShowDelay]="HINT_SHOW_DELAY"
+            >
+                add
+            </mat-icon>
+        </mat-card>
+    </div>
+</ng-template>
+
