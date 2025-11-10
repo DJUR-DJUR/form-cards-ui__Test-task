@@ -8,37 +8,37 @@ import { SubmitFormRequestData } from '../interface/requests';
 const RESPONSE_DELAY_MS = 500;
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class MockBackendInterceptor implements HttpInterceptor {
-  intercept(req: HttpRequest<SubmitFormRequestData>): Observable<HttpResponse<CheckUserResponseData | SubmitFormResponseData>> {
-    if (req.url.endsWith('/api/checkUsername') && req.method === 'POST') {
-      return this.handleCheckUsername(req);
+    intercept(req: HttpRequest<SubmitFormRequestData>): Observable<HttpResponse<CheckUserResponseData | SubmitFormResponseData>> {
+        if (req.url.endsWith('/api/checkUsername') && req.method === 'POST') {
+            return this.handleCheckUsername(req);
+        }
+
+        if (req.url.endsWith('/api/submitForm') && req.method === 'POST') {
+            return this.handleSubmitForm();
+        }
+
+        return of(new HttpResponse({status: 404, body: {result: 'You are using the wrong endpoint'}}));
     }
 
-    if (req.url.endsWith('/api/submitForm') && req.method === 'POST') {
-      return this.handleSubmitForm();
+    private handleCheckUsername(req: HttpRequest<SubmitFormRequestData>): Observable<HttpResponse<CheckUserResponseData>> {
+        const isAvailable = req.body?.username.includes('new') ?? false;
+        const response = new HttpResponse({status: 200, body: {isAvailable}});
+
+        return of(response).pipe(
+            delay(RESPONSE_DELAY_MS),
+            tap(() => console.log('checkUsername response:', {isAvailable}))
+        );
     }
 
-    return of(new HttpResponse({ status: 404, body: { result: 'You are using the wrong endpoint'} }));
-  }
+    private handleSubmitForm(): Observable<HttpResponse<SubmitFormResponseData>> {
+        const response = new HttpResponse({status: 200, body: {result: 'nice job'}});
 
-  private handleCheckUsername(req: HttpRequest<SubmitFormRequestData>): Observable<HttpResponse<CheckUserResponseData>> {
-    const isAvailable = req.body?.username.includes('new') ?? false;
-    const response = new HttpResponse({ status: 200, body: { isAvailable } });
-
-    return of(response).pipe(
-      delay(RESPONSE_DELAY_MS),
-      tap(() => console.log('checkUsername response:', { isAvailable }))
-    );
-  }
-
-  private handleSubmitForm(): Observable<HttpResponse<SubmitFormResponseData>> {
-    const response = new HttpResponse({ status: 200, body: { result: 'nice job' } });
-
-    return of(response).pipe(
-      delay(RESPONSE_DELAY_MS),
-      tap(() => console.log('submitForm response'))
-    );
-  }
+        return of(response).pipe(
+            delay(RESPONSE_DELAY_MS),
+            tap(() => console.log('submitForm response'))
+        );
+    }
 }

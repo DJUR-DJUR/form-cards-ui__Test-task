@@ -1,7 +1,7 @@
 export interface CheckUserResponseData {
-  isAvailable: boolean;
+    isAvailable: boolean;
 }
 
 export interface SubmitFormResponseData {
-  result: string;
+    result: string;
 }

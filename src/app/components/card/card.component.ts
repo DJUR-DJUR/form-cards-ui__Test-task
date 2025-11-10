@@ -1,8 +1,8 @@
 import {
-  ChangeDetectionStrategy,
-  Component, computed, DestroyRef, inject,
-  input, OnInit,
-  output, signal,
+    ChangeDetectionStrategy,
+    Component, computed, DestroyRef, inject,
+    input, OnInit,
+    output, signal,
 } from '@angular/core'
 import { MatCard, MatCardContent } from '@angular/material/card'
 import { MatIcon } from '@angular/material/icon'
@@ -15,7 +15,7 @@ import { ValidationMessageDirective } from "../../shared/directives/validation-m
 import { MatAutocomplete, MatAutocompleteTrigger, MatOption } from "@angular/material/autocomplete";
 import { Country } from "../../shared/enum/country";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { FormCardGroup} from "../../shared/interface/interfaces";
+import { FormCardGroup } from "../../shared/interface/interfaces";
 import { debounceTime } from "rxjs";
 import { HINT_SHOW_DELAY, MAX_BIRTH_DATE, MIN_BIRTH_DATE, USER_INPUT_DEBOUNCE } from "../../shared/constants/constants";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -43,40 +43,40 @@ import { provideNativeDateAdapter } from "@angular/material/core";
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CardComponent implements OnInit {
-  readonly #destroyRef = inject(DestroyRef);
-  readonly #countries = Object.values(Country);
+    readonly #destroyRef = inject(DestroyRef);
+    readonly #countries = Object.values(Country);
 
-  form = input.required<FormCardGroup>();
-  index = input.required<number>();
+    form = input.required<FormCardGroup>();
+    index = input.required<number>();
 
-  remove = output<number>();
+    remove = output<number>();
 
-  protected filteredCountries = signal<string[]>(this.#countries);
-  protected readonly countryControl = computed(() => this.form().controls.country);
-  protected readonly usernameControl = computed(() => this.form().controls.username);
-  protected readonly birthdayControl = computed(() => this.form().controls.birthday);
+    protected filteredCountries = signal<string[]>(this.#countries);
+    protected readonly countryControl = computed(() => this.form().controls.country);
+    protected readonly usernameControl = computed(() => this.form().controls.username);
+    protected readonly birthdayControl = computed(() => this.form().controls.birthday);
 
-  protected readonly MAX_BIRTH_DATE = MAX_BIRTH_DATE;
-  protected readonly MIN_BIRTH_DATE = MIN_BIRTH_DATE;
-  protected readonly HINT_SHOW_DELAY = HINT_SHOW_DELAY;
+    protected readonly MAX_BIRTH_DATE = MAX_BIRTH_DATE;
+    protected readonly MIN_BIRTH_DATE = MIN_BIRTH_DATE;
+    protected readonly HINT_SHOW_DELAY = HINT_SHOW_DELAY;
 
-  ngOnInit(): void {
-    this.initCountryFilter();
-  }
+    ngOnInit(): void {
+        this.initCountryFilter();
+    }
 
-  private initCountryFilter(): void {
-    this.countryControl()?.valueChanges
-      .pipe(
-        debounceTime(USER_INPUT_DEBOUNCE),
-        takeUntilDestroyed(this.#destroyRef)
-      )
-      .subscribe(value => this.filterCountries(value));
-  }
+    private initCountryFilter(): void {
+        this.countryControl()?.valueChanges
+            .pipe(
+                debounceTime(USER_INPUT_DEBOUNCE),
+                takeUntilDestroyed(this.#destroyRef)
+            )
+            .subscribe(value => this.filterCountries(value));
+    }
 
-  private filterCountries(value: string | null): void {
-    const filter = (value || '').toLowerCase();
-    this.filteredCountries.set(
-      this.#countries.filter(c => c.toLowerCase().includes(filter))
-    );
-  }
+    private filterCountries(value: string | null): void {
+        const filter = (value || '').toLowerCase();
+        this.filteredCountries.set(
+            this.#countries.filter(c => c.toLowerCase().includes(filter))
+        );
+    }
 }
