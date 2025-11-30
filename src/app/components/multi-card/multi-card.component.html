@@ -22,7 +22,9 @@
                             Cancel
                         </button>
 
-                        <span class="ms-3" style="color: gray">{{ formattedTimer() }}</span>
+                        <span class="ms-3" style="color: gray">
+                            {{ timerSec() * 1000 | date: 'm:ss' : 'UTC' }}
+                        </span>
                     } @else {
                         <button
                             matButton="filled"

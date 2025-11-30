@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
 import { CardComponent } from "../card/card.component";
 import { MatCard, MatCardHeader } from "@angular/material/card";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
-import { NgTemplateOutlet } from "@angular/common";
+import { DatePipe, NgTemplateOutlet } from "@angular/common";
 import { DataService } from "../../services/data.service";
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
 import { FormCardControls, FormCardGroup, SubmitFormData } from "../../shared/interface/interfaces";
@@ -30,6 +30,7 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
         NgTemplateOutlet,
         MatCardHeader,
         MatButton,
+        DatePipe,
     ],
     templateUrl: './multi-card.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -41,19 +42,12 @@ export class MultiCardComponent implements OnInit {
     protected readonly formsArray = new FormArray<FormCardGroup>([]);
 
     protected readonly isSubmitting = signal(false);
-    protected readonly formattedTimer = computed(() => {
-        const totalSec = this.timerSec();
-        const minutes = Math.floor(totalSec / 60);
-        const seconds = totalSec % 60;
-        const secStr = seconds < 10 ? `0${seconds}` : seconds.toString();
-        return `${minutes}:${secStr}`;
-    });
+    protected readonly timerSec = signal(0);
 
     protected readonly HINT_SHOW_DELAY = HINT_SHOW_DELAY;
     protected readonly MAX_FORMS_COUNT = MAX_FORMS_COUNT;
 
     private intervalId?: ReturnType<typeof setInterval>;
-    private readonly timerSec = signal(0);
 
     ngOnInit(): void {
         this.addForm();
@@ -78,7 +72,7 @@ export class MultiCardComponent implements OnInit {
     }
 
     submitAll(): void {
-        if (this.formsArray.invalid) {
+        if (this.formsArray.invalid || this.formsArray.pending) {
             this.formsArray.markAllAsTouched();
             return;
         }
