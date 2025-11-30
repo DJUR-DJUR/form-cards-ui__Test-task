@@ -67,8 +67,12 @@ export class MultiCardComponent implements OnInit {
         this.formsArray.push(this.createForm());
     }
 
-    removeForm(index: number): void {
-        this.formsArray.removeAt(index);
+    removeForm(form: FormCardGroup): void {
+        const index = this.formsArray.controls.indexOf(form);
+
+        if (index !== -1) {
+            this.formsArray.removeAt(index);
+        }
     }
 
     submitAll(): void {

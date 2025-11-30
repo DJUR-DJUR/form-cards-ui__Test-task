@@ -8,7 +8,7 @@
                 matTooltip="Remove form card"
                 [matTooltipShowDelay]="HINT_SHOW_DELAY"
                 [disabled]="form().disabled"
-                (click)="remove.emit(index())"
+                (click)="remove.emit(form())"
             >
                 <mat-icon>close</mat-icon>
             </button>

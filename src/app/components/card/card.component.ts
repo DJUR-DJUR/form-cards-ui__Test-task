@@ -47,9 +47,8 @@ export class CardComponent implements OnInit {
     readonly #countries = Object.values(Country);
 
     form = input.required<FormCardGroup>();
-    index = input.required<number>();
 
-    remove = output<number>();
+    remove = output<FormCardGroup>();
 
     protected filteredCountries = signal<string[]>(this.#countries);
     protected readonly countryControl = computed(() => this.form().controls.country);
